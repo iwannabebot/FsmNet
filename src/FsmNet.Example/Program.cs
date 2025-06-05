@@ -8,68 +8,92 @@ class Program
 {
     static void Main()
     {
-        var registry = new TransitionRegistry<TicketContext>();
-        registry.RegisterCondition("HasAgent", ctx => ctx.IsAgentAssigned);
-        registry.RegisterCondition("Confirmed", ctx => ctx.IsCustomerConfirmed);
-        registry.RegisterSideEffect("NotifyCustomer", ctx => Console.WriteLine("Customer notified"));
+        var registry = new TransitionRegistry<OrderContext>();
+        registry.RegisterCondition("PaymentReceived", ctx => ctx.PaymentReceived);
+        registry.RegisterCondition("PackingComplete", ctx => ctx.PackingComplete);
+        registry.RegisterCondition("Shipped", ctx => ctx.Shipped);
+        registry.RegisterCondition("Delivered", ctx => ctx.Delivered);
+        registry.RegisterCondition("CancelRequested", ctx => ctx.CancelRequested);
+        registry.RegisterCondition("ReturnRequested", ctx => ctx.ReturnRequested);
 
-        var builder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create("Ticket")
-            .WithInitialState(TicketState.Open)
-            .AddTransition(TicketState.Open, TicketState.InProgress)
-                .When(registry.Conditions["HasAgent"], "HasAgent")
-                .WithSideEffect(registry.SideEffects["NotifyCustomer"], "NotifyCustomer")
+        registry.RegisterSideEffect("NotifyShipment", ctx => Console.WriteLine("Customer notified: Order shipped"));
+        registry.RegisterSideEffect("NotifyDelivery", ctx => Console.WriteLine("Customer notified: Order delivered"));
+        registry.RegisterSideEffect("NotifyCancel", ctx => Console.WriteLine("Customer notified: Order cancelled"));
+        registry.RegisterSideEffect("NotifyReturn", ctx => Console.WriteLine("Customer notified: Order returned"));
+
+        var builder = FiniteStateMachineBuilder<OrderState, OrderContext>.Create("Order")
+            .WithInitialState(OrderState.Created)
+            .AddTransition(OrderState.Created, OrderState.Paid)
+                .When(registry.Conditions["PaymentReceived"], "PaymentReceived")
                 .Done()
-            .AddTransition(TicketState.InProgress, TicketState.Resolved)
-                .When(registry.Conditions["Confirmed"], "Confirmed")
+            .AddTransition(OrderState.Paid, OrderState.Packed)
+                .When(registry.Conditions["PackingComplete"], "PackingComplete")
+                .Done()
+            .AddTransition(OrderState.Packed, OrderState.Shipped)
+                .When(registry.Conditions["Shipped"], "Shipped")
+                .WithSideEffect(registry.SideEffects["NotifyShipment"], "NotifyShipment")
+                .Done()
+            .AddTransition(OrderState.Shipped, OrderState.Delivered)
+                .When(registry.Conditions["Delivered"], "Delivered")
+                .WithSideEffect(registry.SideEffects["NotifyDelivery"], "NotifyDelivery")
+                .Done()
+            .AddTransition(OrderState.Created, OrderState.Cancelled)
+                .When(registry.Conditions["CancelRequested"], "CancelRequested")
+                .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+                .Done()
+            .AddTransition(OrderState.Paid, OrderState.Cancelled)
+                .When(registry.Conditions["CancelRequested"], "CancelRequested")
+                .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+                .Done()
+            .AddTransition(OrderState.Packed, OrderState.Cancelled)
+                .When(registry.Conditions["CancelRequested"], "CancelRequested")
+                .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+                .Done()
+            .AddTransition(OrderState.Shipped, OrderState.Cancelled)
+                .When(registry.Conditions["CancelRequested"], "CancelRequested")
+                .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+                .Done()
+            .AddTransition(OrderState.Delivered, OrderState.Returned)
+                .When(registry.Conditions["ReturnRequested"], "ReturnRequested")
+                .WithSideEffect(registry.SideEffects["NotifyReturn"], "NotifyReturn")
                 .Done();
 
-        var definition = builder.Build();
+        var fsm = new FiniteStateMachine<OrderState, OrderContext>(builder.Build());
 
-        var serializable = builder.ToSerializable();
+        var context = new OrderContext { PaymentReceived = true };
+        fsm.TryTransitionTo(OrderState.Paid, context); // Moves to Paid
 
-        // JSON using System.Text.Json
-        string json = JsonSerializer.Serialize(serializable, new JsonSerializerOptions { WriteIndented = true });
+        context.PackingComplete = true;
+        fsm.TryTransitionTo(OrderState.Packed, context); // Moves to Packed
 
-        // YAML using YamlDotNet
-        var yamlSerializer = new YamlDotNet.Serialization.Serializer();
-        string yaml = yamlSerializer.Serialize(serializable);
+        context.Shipped = true;
+        fsm.TryTransitionTo(OrderState.Shipped, context); // Moves to Shipped, notifies shipment
 
-        // From JSON
-        var jsonDto = JsonSerializer.Deserialize<SerializableStateMachine>(json)!;
+        context.Delivered = true;
+        fsm.TryTransitionTo(OrderState.Delivered, context); // Moves to Delivered, notifies delivery
 
-        // From YAML
-        var yamlDeserializer = new YamlDotNet.Serialization.Deserializer();
-        var yamlDto = yamlDeserializer.Deserialize<SerializableStateMachine>(new StringReader(yaml));
-
-        // Rebuild FSM
-        var loadedBuilder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create(jsonDto.EntityType)
-            .LoadFrom(jsonDto, registry);
-
-        var loadedFsm = loadedBuilder.Build();
-
-        // Runtime FSM Usage
-        var sm = new FiniteStateMachine<TicketState, TicketContext>(loadedFsm);
-        var context = new TicketContext { IsAgentAssigned = true, IsCustomerConfirmed = false };
-
-        Console.WriteLine($"Current: {sm.Current}"); // Open
-
-        if (sm.TryTransitionTo(TicketState.InProgress, context))
-            Console.WriteLine($"Now: {sm.Current}"); // InProgress
-
-
+        context.ReturnRequested = true;
+        fsm.TryTransitionTo(OrderState.Returned, context); // Moves to Returned, notifies return
     }
 }
 
-public enum TicketState
+public enum OrderState
 {
-    Open,
-    InProgress,
-    Resolved,
-    Closed
+    Created,
+    Paid,
+    Packed,
+    Shipped,
+    Delivered,
+    Cancelled,
+    Returned
 }
 
-public class TicketContext
+public class OrderContext
 {
-    public bool IsAgentAssigned { get; set; }
-    public bool IsCustomerConfirmed { get; set; }
+    public bool PaymentReceived { get; set; }
+    public bool PackingComplete { get; set; }
+    public bool Shipped { get; set; }
+    public bool Delivered { get; set; }
+    public bool CancelRequested { get; set; }
+    public bool ReturnRequested { get; set; }
 }
