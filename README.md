@@ -1,17 +1,17 @@
-# FsmNet
+# SharpFsm
 
-A flexible finite state machine (FSM) library for .NET, supporting .NET Standard 2.0+, .NET Framework 4.6.1+, and .NET 5/6/7/8/9. FsmNet is a C# library designed to create and manage Finite State Machines (FSMs) in a simple and efficient way. It allows developers to define states, transitions, and events, enabling the modeling of complex behaviors in a structured manner.
+A flexible finite state machine (FSM) library for .NET, supporting .NET Standard 2.0+, .NET Framework 4.6.1+, and .NET 5/6/7/8/9. SharpFsm is a C# library designed to create and manage Finite State Machines (FSMs) in a simple and efficient way. It allows developers to define states, transitions, and events, enabling the modeling of complex behaviors in a structured manner.
 
 ## Quick Start
 
-Install FsmNet via NuGet Package Manager or dotnet.
+Install SharpFsm via NuGet Package Manager or dotnet.
 
 ```bash
-Install-Package FsmNet
+Install-Package SharpFsm
 ```
 
 ```bash
-dotnet add package FsmNet
+dotnet add package SharpFsm
 ```
 
 ```csharp
@@ -39,7 +39,7 @@ Console.WriteLine(fsm.Current); // On
 ## Concepts
 
 ### State
-A state represents a distinct condition or situation in the lifecycle of an object or process. In FsmNet, states are typically defined using an enum (e.g., Open, Closed, InProgress).
+A state represents a distinct condition or situation in the lifecycle of an object or process. In SharpFsm, states are typically defined using an enum (e.g., Open, Closed, InProgress).
 
 ### Transition
 A transition is a rule that defines how the FSM moves from one state to another.
@@ -183,7 +183,7 @@ public class OrderContext
 
 2. Register Conditions and Side Effects
 ```csharp
-using FsmNet;
+using SharpFsm;
 
 var registry = new TransitionRegistry<OrderContext>();
 registry.RegisterCondition("PaymentReceived", ctx => ctx.PaymentReceived);
@@ -309,8 +309,8 @@ var sm = new FiniteStateMachine<TicketState, TicketContext>(loadedBuilder.Build(
 ## API Overview
 
 ### Namespaces
-- FsmNet
-- FsmNet.Serialization
+- SharpFsm
+- SharpFsm.Serialization
 
 ### Core Types
 

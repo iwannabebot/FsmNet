@@ -1,5 +1,5 @@
-﻿using FsmNet;
-using FsmNet.Serialization;
+﻿using SharpFsm;
+using SharpFsm.Serialization;
 using System.Text.Json;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;

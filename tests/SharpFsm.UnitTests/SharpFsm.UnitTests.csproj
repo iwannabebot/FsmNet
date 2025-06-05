@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FsmNet\FsmNet.csproj" />
+    <ProjectReference Include="..\..\src\SharpFsm\SharpFsm.csproj" />
   </ItemGroup>
 
   <ItemGroup>

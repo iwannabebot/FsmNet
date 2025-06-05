@@ -1,10 +1,10 @@
-using FsmNet.Serialization;
-using FsmNet;
+using SharpFsm.Serialization;
+using SharpFsm;
 using System.Text.Json;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace FsmNet.UnitTests
+namespace SharpFsm.UnitTests
 {
     public class FiniteStateMachineTests
     {

@@ -1,4 +1,4 @@
-﻿namespace FsmNet.Serialization
+﻿namespace SharpFsm.Serialization
 {
     using System;
     using System.Collections.Generic;

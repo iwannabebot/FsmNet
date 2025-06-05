@@ -2,14 +2,14 @@
 	<PropertyGroup>
 		<TargetFrameworks>net8.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageId>FsmNet</PackageId>
+		<PackageId>SharpFsm</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Nilay Vishwakarma</Authors>
 		<Description>A flexible finite state machine library for .NET.</Description>
 		<PackageTags>fsm;state-machine;workflow;dotnet</PackageTags>
-		<RepositoryUrl>https://github.com/iwannabebot/FsmNet</RepositoryUrl>
+		<RepositoryUrl>https://github.com/iwannabebot/SharpFsm</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/iwannabebot/FsmNet</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/iwannabebot/SharpFsm</PackageProjectUrl>
 		<Copyright>Copyright © Nilay Vishwakarma 2025</Copyright>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>

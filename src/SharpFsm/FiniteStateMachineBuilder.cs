@@ -1,6 +1,6 @@
-﻿namespace FsmNet
+﻿namespace SharpFsm
 {
-    using FsmNet.Serialization;
+    using SharpFsm.Serialization;
     using System;
     using System.Collections.Generic;
     using System.Linq;

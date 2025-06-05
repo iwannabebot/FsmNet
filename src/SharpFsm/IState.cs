@@ -1,4 +1,4 @@
-﻿namespace FsmNet
+﻿namespace SharpFsm
 {
     /// <summary>
     /// Represents a state in a finite state machine.

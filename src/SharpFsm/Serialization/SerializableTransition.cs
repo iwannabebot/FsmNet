@@ -1,4 +1,4 @@
-﻿namespace FsmNet.Serialization
+﻿namespace SharpFsm.Serialization
 {
     /// <summary>
     /// Represents a transition in a state machine that can be serialized.

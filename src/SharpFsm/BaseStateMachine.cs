@@ -1,4 +1,4 @@
-﻿namespace FsmNet
+﻿namespace SharpFsm
 {
     using System;
 
