@@ -1,6 +1,6 @@
 # SharpFsm
 
-A flexible finite state machine (FSM) library for .NET, supporting .NET Standard 2.0+, .NET Framework 4.6.1+, and .NET 5/6/7/8/9. SharpFsm is a C# library designed to create and manage Finite State Machines (FSMs) in a simple and efficient way. It allows developers to define states, transitions, and events, enabling the modeling of complex behaviors in a structured manner.
+A flexible finite state machine (FSM) library for .NET written in C#, it is designed to create and manage Finite State Machines (FSMs) in a simple and efficient way. It allows developers to define states, transitions, and events, enabling the modeling of complex behaviors in a structured manner.
 
 ## Quick Start
 
