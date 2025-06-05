@@ -8,23 +8,23 @@
     /// <summary>
     /// Builder for creating a finite state machine based on an enumeration type.
     /// </summary>
-    /// <typeparam name="TState"></typeparam>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TState">State Enum Type</typeparam>
+    /// <typeparam name="TContext">Context Type</typeparam>
     public class FiniteStateMachineBuilder<TState, TContext> where TState : struct, Enum
     {
-        private readonly string _workItemType;
+        private readonly string _entityType;
         private TState? _initial;
         private readonly HashSet<TState> _states = new HashSet<TState>();
         private readonly List<ITransition<TContext>> _transitions = new List<ITransition<TContext>>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FiniteStateMachineBuilder{TState, TContext}"/> class with the specified work item type.
+        /// Initializes a new instance of the <see cref="FiniteStateMachineBuilder{TState, TContext}"/> class with the specified entity type.
         /// </summary>
-        /// <param name="workItemType"></param>
-        private FiniteStateMachineBuilder(string workItemType) => _workItemType = workItemType;
+        /// <param name="entityType"></param>
+        private FiniteStateMachineBuilder(string entityType) => _entityType = entityType;
 
         /// <summary>
-        /// Creates a new instance of the <see cref="FiniteStateMachineBuilder{TState, TContext}"/> for the specified work item type.
+        /// Creates a new instance of the <see cref="FiniteStateMachineBuilder{TState, TContext}"/> for the specified entity type.
         /// </summary>
         /// <param name="workItemType"></param>
         /// <returns></returns>
@@ -63,7 +63,7 @@
         public EnumStateMachineDefinition<TState, TContext> Build()
         {
             if (_initial is null) throw new InvalidOperationException("Initial state not specified.");
-            return new EnumStateMachineDefinition<TState, TContext>(_workItemType, _states, _transitions, _initial.Value);
+            return new EnumStateMachineDefinition<TState, TContext>(_entityType, _states, _transitions, _initial.Value);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@
             if (_initial is null) throw new InvalidOperationException("Initial state must be defined.");
             return new SerializableStateMachine
             {
-                EntityType = _workItemType,
+                EntityType = _entityType,
                 InitialState = _initial.ToString(),
                 States = _states.Select(s => s.ToString()).ToList(),
                 Transitions = _transitions.Select(t => new SerializableTransition
@@ -102,6 +102,12 @@
             private string _conditionName;
             private string _sideEffectName;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TransitionBuilder"/> class with the specified parent builder and states.
+            /// </summary>
+            /// <param name="parent"></param>
+            /// <param name="from"></param>
+            /// <param name="to"></param>
             public TransitionBuilder(FiniteStateMachineBuilder<TState, TContext> parent, TState from, TState to)
             {
                 _parent = parent;
@@ -109,6 +115,12 @@
                 _to = to;
             }
 
+            /// <summary>
+            /// Defines a condition for the transition. The condition is a function that takes the context and returns a boolean indicating whether the transition can occur.
+            /// </summary>
+            /// <param name="condition"></param>
+            /// <param name="name"></param>
+            /// <returns></returns>
             public TransitionBuilder When(Func<TContext, bool> condition, string name = null)
             {
                 _condition = condition;
@@ -116,6 +128,12 @@
                 return this;
             }
 
+            /// <summary>
+            /// Defines a side effect for the transition. The side effect is an action that takes the context and is executed when the transition occurs.
+            /// </summary>
+            /// <param name="effect"></param>
+            /// <param name="name"></param>
+            /// <returns></returns>
             public TransitionBuilder WithSideEffect(Action<TContext> effect, string name = null)
             {
                 _sideEffect = effect;
@@ -123,12 +141,20 @@
                 return this;
             }
 
+            /// <summary>
+            /// Finalizes the transition definition and adds it to the parent finite state machine builder's list of transitions.
+            /// </summary>
+            /// <returns></returns>
             public FiniteStateMachineBuilder<TState, TContext> Done()
             {
                 _parent._transitions.Add(new EnumTransition<TState, TContext>(_from, _to, _condition, _sideEffect, _conditionName, _sideEffectName));
                 return _parent;
             }
 
+            /// <summary>
+            /// Implicitly converts the TransitionBuilder to a FiniteStateMachineBuilder, allowing for method chaining.
+            /// </summary>
+            /// <param name="b"></param>
             public static implicit operator FiniteStateMachineBuilder<TState, TContext>(TransitionBuilder b) => b.Done();
         }
 

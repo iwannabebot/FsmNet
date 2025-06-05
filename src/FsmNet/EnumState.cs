@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents a state in a finite state machine defined by an enumeration.
     /// </summary>
-    /// <typeparam name="TEnum"></typeparam>
+    /// <typeparam name="TEnum">State Enum Type</typeparam>
     public class EnumState<TEnum> : IState where TEnum : struct, Enum
     {
         /// <summary>
@@ -21,13 +21,13 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EnumState{TEnum}"/> class with the specified enumeration value.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Enum state value</param>
         public EnumState(TEnum value) => Value = value;
 
         /// <summary>
         /// Returns a string representation of the state, which is its name.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>String representation of state</returns>
         public override string ToString() => Name;
     }
 }

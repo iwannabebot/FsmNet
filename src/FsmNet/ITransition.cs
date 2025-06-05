@@ -5,7 +5,7 @@
     /// <summary>
     /// Represents a transition between two states in a finite state machine.
     /// </summary>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TContext">Context Type</typeparam>
     public interface ITransition<TContext>
     {
         /// <summary>

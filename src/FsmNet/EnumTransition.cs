@@ -5,8 +5,8 @@
     /// <summary>
     /// Represents a transition in a finite state machine defined by an enumeration.
     /// </summary>
-    /// <typeparam name="TEnum"></typeparam>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TEnum">State Enum Type</typeparam>
+    /// <typeparam name="TContext">Context Type</typeparam>
     public class EnumTransition<TEnum, TContext> : ITransition<TContext> where TEnum : struct, Enum
     {
         /// <summary>

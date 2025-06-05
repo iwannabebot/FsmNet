@@ -5,8 +5,8 @@
     /// <summary>
     /// Interface for a state machine that defines the core functionality for transitioning between states.
     /// </summary>
-    /// <typeparam name="TState"></typeparam>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TState">State Enum Type</typeparam>
+    /// <typeparam name="TContext">Context Type</typeparam>
     public interface IStateMachine<TState, TContext> where TState : struct, Enum
     {
         /// <summary>

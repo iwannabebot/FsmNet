@@ -11,7 +11,7 @@
         /// <summary>
         /// Gets the type of work item this state machine is associated with.
         /// </summary>
-        string WorkItemType { get; }
+        string EntityType { get; }
 
         /// <summary>
         /// Gets a collection of all states in the state machine.
