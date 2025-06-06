@@ -8,6 +8,20 @@ namespace SharpFsm.UnitTests
 {
     public class FiniteStateMachineTests
     {
+        public class TicketContext
+        {
+            public bool IsAgentAssigned { get; set; }
+            public bool IsCustomerConfirmed { get; set; }
+        }
+
+        public enum TicketState
+        {
+            Open,
+            InProgress,
+            Resolved,
+            Closed
+        }
+
         private TransitionRegistry<TicketContext> SetupRegistry()
         {
             var registry = new TransitionRegistry<TicketContext>();
@@ -184,19 +198,59 @@ namespace SharpFsm.UnitTests
             var sm = new FiniteStateMachine<TicketState, TicketContext>(builder.Build());
             Assert.True(sm.TryTransitionTo(TicketState.InProgress, new TicketContext()));
         }
+
+        [Fact]
+        public void Test_RepeatedTransitionToSameState_Fails()
+        {
+            var registry = SetupRegistry();
+            var definition = BuildDefinition(registry);
+            var sm = new FiniteStateMachine<TicketState, TicketContext>(definition);
+            var context = new TicketContext { IsAgentAssigned = true };
+
+            Assert.True(sm.TryTransitionTo(TicketState.InProgress, context));
+            // Already in InProgress, should not transition again
+            Assert.False(sm.TryTransitionTo(TicketState.InProgress, context));
+            Assert.Equal(TicketState.InProgress, sm.Current);
+        }
+
+        [Fact]
+        public void Test_SideEffect_IsExecuted()
+        {
+            var registry = SetupRegistry();
+            var definition = BuildDefinition(registry);
+            var sm = new FiniteStateMachine<TicketState, TicketContext>(definition);
+            var context = new TicketContext { IsAgentAssigned = true, IsCustomerConfirmed = false };
+
+            Assert.False(context.IsCustomerConfirmed);
+            Assert.True(sm.TryTransitionTo(TicketState.InProgress, context));
+            // Side effect should set IsCustomerConfirmed to true
+            Assert.True(context.IsCustomerConfirmed);
+        }
+
+        [Fact]
+        public void Test_NullContext_ThrowsArgumentNullException()
+        {
+            var registry = SetupRegistry();
+            var definition = BuildDefinition(registry);
+            var sm = new FiniteStateMachine<TicketState, TicketContext>(definition);
+
+            Assert.Throws<ArgumentNullException>(() => sm.TryTransitionTo(TicketState.InProgress, null!));
+        }
+
+        [Fact]
+        public void Test_TransitionToInvalidState_Fails()
+        {
+            var registry = SetupRegistry();
+            var definition = BuildDefinition(registry);
+            var sm = new FiniteStateMachine<TicketState, TicketContext>(definition);
+            var context = new TicketContext { IsAgentAssigned = true };
+
+            // "Closed" is not a valid target from "Open" or "InProgress" in this definition
+            Assert.False(sm.TryTransitionTo(TicketState.Closed, context));
+            Assert.Equal(TicketState.Open, sm.Current);
+        }
+
     }
 
-    public class TicketContext
-    {
-        public bool IsAgentAssigned { get; set; }
-        public bool IsCustomerConfirmed { get; set; }
-    }
-
-    public enum TicketState
-    {
-        Open,
-        InProgress,
-        Resolved,
-        Closed
-    }
+    
 }
