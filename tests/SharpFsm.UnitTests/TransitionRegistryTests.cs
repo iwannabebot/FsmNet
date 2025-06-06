@@ -4,6 +4,12 @@ namespace SharpFsm.UnitTests
 {
     public class TransitionRegistryTests
     {
+        public class TicketContext
+        {
+            public bool IsAgentAssigned { get; set; }
+            public bool IsCustomerConfirmed { get; set; }
+        }
+
         [Fact]
         public void TransitionRegistry_RegistersAndRetrievesCondition()
         {

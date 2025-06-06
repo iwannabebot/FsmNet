@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net8.0;</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>SharpFsm</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Nilay Vishwakarma</Authors>
 		<PackageDescription>A tiny finite state machine library for .NET.</PackageDescription>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Description>A tiny finite state machine library for .NET.</Description>
 		<PackageTags>fsm;state-machine;workflow;dotnet</PackageTags>
 		<RepositoryUrl>https://github.com/iwannabebot/SharpFsm</RepositoryUrl>
@@ -19,5 +20,6 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="" />
+		<None Include="README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 </Project>
