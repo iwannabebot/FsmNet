@@ -14,6 +14,7 @@
     {
         private readonly string _entityType;
         private TState? _initial;
+        private TransitionRegistry<TContext> _registry;
         private readonly HashSet<TState> _states = new HashSet<TState>();
         private readonly List<ITransition<TContext>> _transitions = new List<ITransition<TContext>>();
 
@@ -39,6 +40,20 @@
         {
             _initial = state;
             _states.Add(state);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the transition registry for the finite state machine. The registry is used to manage conditions and side effects for transitions.
+        /// </summary>
+        /// <param name="registry"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public FiniteStateMachineBuilder<TState, TContext> WithRegistry(TransitionRegistry<TContext> registry)
+        {
+            if (registry == null)
+                throw new ArgumentNullException(nameof(registry));
+            _registry = registry;
             return this;
         }
 
@@ -129,6 +144,27 @@
             }
 
             /// <summary>
+            /// Defines a condition for the transition by referencing a condition name from the registry. This allows for reusing conditions defined elsewhere in the state machine.
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            public TransitionBuilder When(string name)
+            {
+                if(_parent._registry == null)
+                    throw new InvalidOperationException("Transition registry is not set. Use WithRegistry to set it before defining transitions.");
+                if (_parent._registry.Conditions.TryGetValue(name, out var condition))
+                {
+                    _condition = condition;
+                    _conditionName = name;
+                }
+                else
+                {
+                    throw new ArgumentException($"Condition '{name}' not found in registry.");
+                }
+                return this;
+            }
+
+            /// <summary>
             /// Defines a side effect for the transition. The side effect is an action that takes the context and is executed when the transition occurs.
             /// </summary>
             /// <param name="effect"></param>
@@ -138,6 +174,28 @@
             {
                 _sideEffect = effect;
                 _sideEffectName = name;
+                return this;
+            }
+
+            /// <summary>
+            /// Defines a side effect for the transition by referencing a side effect name from the registry. This allows for reusing side effects defined elsewhere in the state machine.
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            /// <exception cref="ArgumentException"></exception>
+            public TransitionBuilder WithSideEffect(string name)
+            {
+                if (_parent._registry == null)
+                    throw new InvalidOperationException("Transition registry is not set. Use WithRegistry to set it before defining transitions.");
+                if (_parent._registry.SideEffects.TryGetValue(name, out var sideEffect))
+                {
+                    _sideEffect = sideEffect;
+                    _sideEffectName = name;
+                }
+                else
+                {
+                    throw new ArgumentException($"Side effect '{name}' not found in registry.");
+                }
                 return this;
             }
 
