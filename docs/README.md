@@ -1,0 +1,307 @@
+﻿# SharpFsm
+
+A flexible finite state machine (FSM) library for .NET written in C#, it is designed to create and manage Finite State Machines (FSMs) in a simple and efficient way. It allows developers to define states, transitions, and events, enabling the modeling of complex behaviors in a structured manner.
+
+## Quick Start
+
+Install SharpFsm via NuGet Package Manager or dotnet.
+
+```bash
+Install-Package SharpFsm
+```
+
+```bash
+dotnet add package SharpFsm
+```
+
+```csharp
+public enum SwitchState { Off, On }
+public class SwitchContext { }
+var builder = FiniteStateMachineBuilder<SwitchState, SwitchContext>.Create("Switch")
+    .WithInitialState(SwitchState.Off)
+    .AddTransition(SwitchState.Off, SwitchState.On).Done()
+    .AddTransition(SwitchState.On, SwitchState.Off).Done();
+var fsm = new FiniteStateMachine<SwitchState, SwitchContext>(builder.Build());
+var context = new SwitchContext();
+Console.WriteLine(fsm.Current); // Off
+fsm.TryTransitionTo(SwitchState.On, context);
+Console.WriteLine(fsm.Current); // On
+```
+
+## Features
+- **State Management**: Easily define and manage states in your FSM. Strongly-typed FSMs using enums for states
+- **Transition Handling**: Transition conditions and side effects.
+- **Serialization**: Serialization to/from JSON and YAML.
+- **Builder Pattern**: Builder pattern for easy FSM construction.
+- **Extensible**: Easily extend the library to fit specific needs or integrate with other systems.
+- **Cross-Platform**: Multi-targeted for broad .NET compatibility
+
+## Concepts
+
+### State
+A state represents a distinct condition or situation in the lifecycle of an object or process. In SharpFsm, states are typically defined using an enum (e.g., Open, Closed, InProgress).
+
+### Transition
+A transition is a rule that defines how the FSM moves from one state to another.
+Each transition specifies:
+- The source state (where the transition starts)
+- The target state (where the transition ends)
+- An optional condition (a function that must return true for the transition to occur)
+- An optional side effect (an action to execute when the transition happens)
+
+### Condition
+A condition is a predicate (function) that determines if a transition is allowed, based on the current context.
+Example: `ctx => ctx.IsAgentAssigned`
+
+### Side Effect
+A side effect is an action that is executed when a transition occurs.
+Example: `ctx => Console.WriteLine("Customer notified")`
+
+### Context
+The context is an object that holds data relevant to the FSM’s operation and is passed to conditions and side effects.
+Example: a `TicketContext` with properties like `IsAgentAssigned`.
+
+### State Machine Definition
+A state machine definition describes all possible states, transitions, the initial state, and associated logic for an FSM.
+
+## Advantage of using FSM
+
+Using a finite state machine (FSM) for managing state offers several advantages over ad-hoc approaches (like scattered conditionals, flags, or event-driven code) and even over some object-oriented state patterns. Here are the key benefits:
+
+1. Clarity and Explicitness
+    - All possible states and transitions are explicitly defined.
+    - The system’s behavior is easy to visualize, reason about, and document.
+    - Reduces ambiguity and hidden state changes.
+2. Predictability and Robustness
+    - Transitions are controlled and validated.
+    - Only allowed transitions can occur, preventing invalid or unexpected state changes.
+    - Makes it easier to handle edge cases and errors.
+3. Maintainability
+    - Adding or modifying states and transitions is straightforward.
+    - Changes are localized to the FSM definition, not scattered across the codebase.
+    - Reduces the risk of introducing bugs when requirements change.
+4. Testability
+    - FSMs are easy to test.
+    - You can systematically test all states and transitions.
+    - Makes it easier to write unit tests for state-dependent logic.
+5. Separation of Concerns
+    - State logic is separated from business logic.
+    - Conditions and side effects are encapsulated, making the codebase cleaner and more modular.
+6. Scalability
+    - FSMs scale well as complexity grows.
+    - Adding new states or transitions does not exponentially increase code complexity, unlike nested if/else or switch statements.
+7. Visualization and Documentation
+    - FSMs can be visualized as state diagrams.
+    - This aids in communication with stakeholders and helps onboard new developers.
+
+| Approach         | Pros of FSM over this approach                       | 
+|------------------|------------------------------------------------------|
+| If/else, switch  | Avoids spaghetti code, centralizes state logic       |
+| Flags/booleans   | Prevents invalid state combinations                  |
+| Event-driven     | Makes allowed transitions explicit and predictable   |
+| State pattern    | FSM is more declarative and easier to visualize      |
+
+## Use Cases
+Here are some common use cases for implementing a finite state machine (FSM) in software development:
+
+1. Workflow and Process Management
+    - Example: Ticketing systems, order processing, approval workflows.
+    - Why: Each item moves through a series of well-defined states (e.g., Open → In Progress → Resolved).
+2. User Interface (UI) Navigation
+    - Example: Wizard dialogs, multi-step forms, menu navigation.
+    - Why: UI components often have distinct states and transitions based on user actions.
+3. Game Development
+    - Example: Character states (Idle, Walking, Jumping, Attacking), enemy AI behaviors.
+    - Why: Game entities often have clear, rule-based state transitions.
+4. Protocol and Communication Handling
+    - Example: Network protocol implementations (TCP handshake, HTTP request/response), parsers.
+    - Why: Protocols are defined by sequences of states and transitions based on received data.
+5. Device and Hardware Control
+    - Example: Embedded systems, robotics, IoT devices (e.g., a washing machine: Idle → Washing → Rinsing → Spinning → Done).
+    - Why: Devices operate in modes with strict rules for moving between them.
+6. Authentication and Authorization Flows
+    - Example: Login processes, multi-factor authentication, session management.
+    - Why: Security flows require strict control over allowed transitions.
+7. Error Handling and Recovery
+    - Example: Retry logic, circuit breakers, transaction management.
+    - Why: Systems need to move between normal, error, and recovery states in a controlled way.
+8. Text Parsing and Lexical Analysis
+    - Example: Tokenizers, interpreters, compilers.
+    - Why: Parsing often involves moving through states based on input characters or tokens.
+
+
+## Example
+
+Let's define a state machine for order management.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Created
+    Created --> Paid: PaymentReceived
+    Paid --> Packed: PackingComplete
+    Packed --> Shipped: Shipped
+    Shipped --> Delivered: Delivered
+    Delivered --> Returned: ReturnRequested
+
+    Created --> Cancelled: CancelRequested
+    Paid --> Cancelled: CancelRequested
+    Packed --> Cancelled: CancelRequested
+    Shipped --> Cancelled: CancelRequested
+
+    Cancelled --> [*]
+    Delivered --> [*]
+    Returned --> [*]
+
+```
+
+1. Define States and Context
+
+```csharp
+public enum OrderState
+{
+    Created,
+    Paid,
+    Packed,
+    Shipped,
+    Delivered,
+    Cancelled,
+    Returned
+}
+
+public class OrderContext
+{
+    // This class can contain direct access to your data stores 
+    // ex: connect to your database to do complex calculations
+    public bool PaymentReceived { get; set; }
+    public bool PackingComplete { get; set; }
+    public bool Shipped { get; set; }
+    public bool Delivered { get; set; }
+    public bool CancelRequested { get; set; }
+    public bool ReturnRequested { get; set; }
+}
+```
+
+2. Register Conditions and Side Effects
+```csharp
+using SharpFsm;
+
+var registry = new TransitionRegistry<OrderContext>();
+registry.RegisterCondition("PaymentReceived", ctx => ctx.PaymentReceived);
+registry.RegisterCondition("PackingComplete", ctx => ctx.PackingComplete);
+registry.RegisterCondition("Shipped", ctx => ctx.Shipped);
+registry.RegisterCondition("Delivered", ctx => ctx.Delivered);
+registry.RegisterCondition("CancelRequested", ctx => ctx.CancelRequested);
+registry.RegisterCondition("ReturnRequested", ctx => ctx.ReturnRequested);
+
+registry.RegisterSideEffect("NotifyShipment", ctx => Console.WriteLine("Customer notified: Order shipped"));
+registry.RegisterSideEffect("NotifyDelivery", ctx => Console.WriteLine("Customer notified: Order delivered"));
+registry.RegisterSideEffect("NotifyCancel", ctx => Console.WriteLine("Customer notified: Order cancelled"));
+registry.RegisterSideEffect("NotifyReturn", ctx => Console.WriteLine("Customer notified: Order returned"));
+```
+
+3. Build a State Machine
+
+```csharp
+var builder = FiniteStateMachineBuilder<OrderState, OrderContext>.Create("Order")
+    .WithInitialState(OrderState.Created)
+    .AddTransition(OrderState.Created, OrderState.Paid)
+        .When(registry.Conditions["PaymentReceived"], "PaymentReceived")
+        .Done()
+    .AddTransition(OrderState.Paid, OrderState.Packed)
+        .When(registry.Conditions["PackingComplete"], "PackingComplete")
+        .Done()
+    .AddTransition(OrderState.Packed, OrderState.Shipped)
+        .When(registry.Conditions["Shipped"], "Shipped")
+        .WithSideEffect(registry.SideEffects["NotifyShipment"], "NotifyShipment")
+        .Done()
+    .AddTransition(OrderState.Shipped, OrderState.Delivered)
+        .When(registry.Conditions["Delivered"], "Delivered")
+        .WithSideEffect(registry.SideEffects["NotifyDelivery"], "NotifyDelivery")
+        .Done()
+    .AddTransition(OrderState.Created, OrderState.Cancelled)
+        .When(registry.Conditions["CancelRequested"], "CancelRequested")
+        .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+        .Done()
+    .AddTransition(OrderState.Paid, OrderState.Cancelled)
+        .When(registry.Conditions["CancelRequested"], "CancelRequested")
+        .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+        .Done()
+    .AddTransition(OrderState.Packed, OrderState.Cancelled)
+        .When(registry.Conditions["CancelRequested"], "CancelRequested")
+        .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+        .Done()
+    .AddTransition(OrderState.Shipped, OrderState.Cancelled)
+        .When(registry.Conditions["CancelRequested"], "CancelRequested")
+        .WithSideEffect(registry.SideEffects["NotifyCancel"], "NotifyCancel")
+        .Done()
+    .AddTransition(OrderState.Delivered, OrderState.Returned)
+        .When(registry.Conditions["ReturnRequested"], "ReturnRequested")
+        .WithSideEffect(registry.SideEffects["NotifyReturn"], "NotifyReturn")
+        .Done();
+
+var fsm = new FiniteStateMachine<OrderState, OrderContext>(builder.Build());
+
+```
+
+3. Use the State Machine
+
+```csharp
+var context = new OrderContext { PaymentReceived = true };
+fsm.TryTransitionTo(OrderState.Paid, context); // Moves to Paid
+
+context.PackingComplete = true;
+fsm.TryTransitionTo(OrderState.Packed, context); // Moves to Packed
+
+context.Shipped = true;
+fsm.TryTransitionTo(OrderState.Shipped, context); // Moves to Shipped, notifies shipment
+
+context.Delivered = true;
+fsm.TryTransitionTo(OrderState.Delivered, context); // Moves to Delivered, notifies delivery
+
+context.ReturnRequested = true;
+fsm.TryTransitionTo(OrderState.Returned, context); // Moves to Returned, notifies return
+```
+
+
+## Serialization/Deserialization Example
+
+1. JSON
+```csharp
+using System.Text.Json;
+
+// Serialization
+var definition = builder.Build(); // Ensure build is called before calling ToSerializable
+var serializedObject = builder.ToSerializable(); // returns SerializableStateMachine object
+string json = JsonSerializer.Serialize(serializedObject);
+
+// Deserialization
+var jsonDto = JsonSerializer.Deserialize<SerializableStateMachine>(json);
+var loadedBuilder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create(jsonDto.EntityType)
+    .LoadFrom(jsonDto, registry);
+var loadedFsm = loadedBuilder.Build();
+var sm = new FiniteStateMachine<TicketState, TicketContext>(loadedFsm);
+```
+
+2. YAML
+```csharp
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+
+// Serialization
+var definition = builder.Build(); // Ensure build is called before calling ToSerializable
+var serializedObject = builder.ToSerializable(); // returns SerializableStateMachine object
+var yamlSerializer = new SerializerBuilder()
+	.WithNamingConvention(CamelCaseNamingConvention.Instance)
+	.Build();
+var yaml = yamlSerializer.Serialize(serializedObject);
+
+// Deserialization
+var yamlDeserializer = new DeserializerBuilder()
+	.WithNamingConvention(CamelCaseNamingConvention.Instance)
+	.IgnoreUnmatchedProperties()
+	.Build();
+var deserializedDto = yamlDeserializer.Deserialize<SerializableStateMachine>(new StringReader(yaml));
+var loadedBuilder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create("Ticket")
+    .LoadFrom(deserializedDto!, registry);
+var sm = new FiniteStateMachine<TicketState, TicketContext>(loadedBuilder.Build());
+```
