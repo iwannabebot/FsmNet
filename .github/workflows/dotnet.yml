@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [ '8.0.x' ] # Add/remove versions as needed
+        dotnet-version: [ '5.0.x', '6.0.x', '7.0.x', '8.0.x' ] # Add/remove versions as needed
 
     steps:
     - uses: actions/checkout@v4

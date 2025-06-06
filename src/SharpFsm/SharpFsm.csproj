@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.1</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>SharpFsm</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Nilay Vishwakarma</Authors>
-		<Description>A flexible finite state machine library for .NET.</Description>
+		<PackageDescription>A tiny finite state machine library for .NET.</PackageDescription>
+		<Description>A tiny finite state machine library for .NET.</Description>
 		<PackageTags>fsm;state-machine;workflow;dotnet</PackageTags>
 		<RepositoryUrl>https://github.com/iwannabebot/SharpFsm</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -16,4 +17,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
+	<ItemGroup>
+		<None Include="icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 </Project>
