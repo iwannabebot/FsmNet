@@ -48,6 +48,8 @@
         /// <returns>If transtion to target state is successful</returns>
         public override bool TryTransitionTo(TState target, TContext context)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
             var transition = _definition.Transitions.FirstOrDefault(t =>
                 t.From.Name == _current.Name &&
                 t.To.Name == target.ToString() &&
