@@ -10,8 +10,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SharpFsm\SharpFsm.csproj" />
 		<PackageReference Include="YamlDotNet" Version="16.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\src\SharpFsm.csproj" />
 	</ItemGroup>
 
 </Project>
