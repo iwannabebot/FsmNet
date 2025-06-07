@@ -4,12 +4,11 @@ A flexible finite state machine (FSM) library for .NET written in C#, it is desi
 
 ![Build](https://github.com/iwannabebot/sharpfsm/actions/workflows/dotnet.yml/badge.svg)
 ![Publish](https://github.com/iwannabebot/sharpfsm/actions/workflows/publish.yml/badge.svg)
+[![NuGet version (SharpWiki)](https://img.shields.io/nuget/v/SharpFsm?label=SharpFsm&logo=nuget)](https://www.nuget.org/packages/SharpFsm/)
 
 ## Quick Start
 
 Install SharpFsm via NuGet Package Manager or dotnet.
-
-[![NuGet version (SharpWiki)](https://img.shields.io/nuget/v/SharpFsm?label=SharpFsm&logo=nuget)](https://www.nuget.org/packages/SharpFsm/)
 
 ```bash
 Install-Package SharpFsm
