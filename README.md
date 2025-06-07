@@ -2,6 +2,9 @@
 
 A flexible finite state machine (FSM) library for .NET written in C#, it is designed to create and manage Finite State Machines (FSMs) in a simple and efficient way. It allows developers to define states, transitions, and events, enabling the modeling of complex behaviors in a structured manner.
 
+![Build](https://github.com/iwannabebot/sharpfsm/actions/workflows/dotnet.yml/badge.svg)
+![Publish](https://github.com/iwannabebot/sharpfsm/actions/workflows/publish.yml/badge.svg)
+
 ## Quick Start
 
 Install SharpFsm via NuGet Package Manager or dotnet.
