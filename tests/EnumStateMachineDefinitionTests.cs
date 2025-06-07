@@ -5,12 +5,12 @@ namespace SharpFsm.UnitTests
         private enum TestState { A, B, C }
         private class TestContext { }
 
-        private class DummyTransition : ITransition<TestContext>
+        private class DummyTransition : ITransition<TestState, TestContext>
         {
             public IState From { get; }
             public IState To { get; }
             public Func<TestContext, bool> Condition { get; }
-            public Action<TestContext> SideEffect { get; }
+            public Action<TestContext, TestState, TestState> SideEffect { get; }
             public string ConditionName { get; }
             public string SideEffectName { get; }
 
@@ -29,7 +29,7 @@ namespace SharpFsm.UnitTests
         public void Constructor_AssignsPropertiesCorrectly()
         {
             var states = new[] { TestState.A, TestState.B };
-            var transitions = new List<ITransition<TestContext>>
+            var transitions = new List<ITransition<TestState, TestContext>>
         {
             new DummyTransition(new EnumState<TestState>(TestState.A), new EnumState<TestState>(TestState.B))
         };
@@ -47,7 +47,7 @@ namespace SharpFsm.UnitTests
         {
             var states = new[] { TestState.A, TestState.B, TestState.C };
             var def = new EnumStateMachineDefinition<TestState, TestContext>(
-                "TestEntity", states, new List<ITransition<TestContext>>(), TestState.B);
+                "TestEntity", states, new List<ITransition<TestState, TestContext>>(), TestState.B);
 
             var stateNames = new HashSet<string>();
             foreach (var state in def.States)
@@ -63,7 +63,7 @@ namespace SharpFsm.UnitTests
         public void InitialState_IsCorrect()
         {
             var def = new EnumStateMachineDefinition<TestState, TestContext>(
-                "TestEntity", new[] { TestState.A, TestState.B }, new List<ITransition<TestContext>>(), TestState.B);
+                "TestEntity", new[] { TestState.A, TestState.B }, new List<ITransition<TestState, TestContext>>(), TestState.B);
 
             Assert.Equal("B", def.InitialState.Name);
         }
@@ -72,7 +72,7 @@ namespace SharpFsm.UnitTests
         public void Transitions_AreAssigned()
         {
             var transition = new DummyTransition(new EnumState<TestState>(TestState.A), new EnumState<TestState>(TestState.B));
-            var transitions = new List<ITransition<TestContext>> { transition };
+            var transitions = new List<ITransition<TestState, TestContext>> { transition };
             var def = new EnumStateMachineDefinition<TestState, TestContext>(
                 "TestEntity", new[] { TestState.A, TestState.B }, transitions, TestState.A);
 

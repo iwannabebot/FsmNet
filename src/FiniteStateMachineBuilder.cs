@@ -14,9 +14,9 @@
     {
         private readonly string _entityType;
         private TState? _initial;
-        private TransitionRegistry<TContext> _registry;
+        private TransitionRegistry<TState, TContext> _registry;
         private readonly HashSet<TState> _states = new HashSet<TState>();
-        private readonly List<ITransition<TContext>> _transitions = new List<ITransition<TContext>>();
+        private readonly List<ITransition<TState, TContext>> _transitions = new List<ITransition<TState, TContext>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FiniteStateMachineBuilder{TState, TContext}"/> class with the specified entity type.
@@ -49,7 +49,7 @@
         /// <param name="registry"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public FiniteStateMachineBuilder<TState, TContext> WithRegistry(TransitionRegistry<TContext> registry)
+        public FiniteStateMachineBuilder<TState, TContext> WithRegistry(TransitionRegistry<TState, TContext> registry)
         {
             if (registry == null)
                 throw new ArgumentNullException(nameof(registry));
@@ -113,7 +113,7 @@
             private readonly TState _from;
             private readonly TState _to;
             private Func<TContext, bool> _condition = _ => true;
-            private Action<TContext> _sideEffect = null;
+            private Action<TContext, TState, TState> _sideEffect = null;
             private string _conditionName;
             private string _sideEffectName;
 
@@ -170,7 +170,7 @@
             /// <param name="effect"></param>
             /// <param name="name"></param>
             /// <returns></returns>
-            public TransitionBuilder WithSideEffect(Action<TContext> effect, string name = null)
+            public TransitionBuilder WithSideEffect(Action<TContext, TState, TState> effect, string name = null)
             {
                 _sideEffect = effect;
                 _sideEffectName = name;
@@ -222,7 +222,7 @@
         /// <param name="dto"></param>
         /// <param name="registry"></param>
         /// <returns></returns>
-        public FiniteStateMachineBuilder<TState, TContext> LoadFrom(SerializableStateMachine dto, TransitionRegistry<TContext> registry)
+        public FiniteStateMachineBuilder<TState, TContext> LoadFrom(SerializableStateMachine dto, TransitionRegistry<TState, TContext> registry)
         {
             _initial = (TState)Enum.Parse(typeof(TState), dto.InitialState);
             foreach (var s in dto.States)

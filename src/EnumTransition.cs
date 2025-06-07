@@ -5,9 +5,9 @@
     /// <summary>
     /// Represents a transition in a finite state machine defined by an enumeration.
     /// </summary>
-    /// <typeparam name="TEnum">State Enum Type</typeparam>
+    /// <typeparam name="TState">State Enum Type</typeparam>
     /// <typeparam name="TContext">Context Type</typeparam>
-    public class EnumTransition<TEnum, TContext> : ITransition<TContext> where TEnum : struct, Enum
+    public class EnumTransition<TState, TContext> : ITransition<TState, TContext> where TState : struct, Enum
     {
         /// <summary>
         /// The state this transition is from, represented as an <see cref="IState"/> instance.
@@ -27,7 +27,7 @@
         /// <summary>
         /// An optional side effect that occurs when the transition is taken, represented as an action that takes the context.
         /// </summary>
-        public Action<TContext> SideEffect { get; }
+        public Action<TContext, TState, TState> SideEffect { get; }
 
         /// <summary>
         /// The name of the condition that triggers this transition, if any.
@@ -48,10 +48,10 @@
         /// <param name="effect"></param>
         /// <param name="conditionName"></param>
         /// <param name="sideEffectName"></param>
-        public EnumTransition(TEnum from, TEnum to, Func<TContext, bool> condition = null, Action<TContext> effect = null, string conditionName = null, string sideEffectName = null)
+        public EnumTransition(TState from, TState to, Func<TContext, bool> condition = null, Action<TContext, TState, TState> effect = null, string conditionName = null, string sideEffectName = null)
         {
-            From = new EnumState<TEnum>(from);
-            To = new EnumState<TEnum>(to);
+            From = new EnumState<TState>(from);
+            To = new EnumState<TState>(to);
             Condition = condition;
             SideEffect = effect;
             ConditionName = conditionName;

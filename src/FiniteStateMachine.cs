@@ -58,7 +58,7 @@
             if (transition is null)
                 return false;
 
-            transition.SideEffect?.Invoke(context);
+            transition.SideEffect?.Invoke(context, Current, target);
             _current = new EnumState<TState>(target);
             return true;
         }

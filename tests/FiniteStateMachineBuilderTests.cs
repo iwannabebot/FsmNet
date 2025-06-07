@@ -51,14 +51,14 @@ namespace SharpFsm.UnitTests
                 .WithInitialState(TestState.Start)
                 .AddTransition(TestState.Start, TestState.End)
                     .When(ctx => ctx.Flag, "FlagTrue")
-                    .WithSideEffect(ctx => effectCalled = true, "Effect")
+                    .WithSideEffect((ctx, _, _) => effectCalled = true, "Effect")
                     .Done();
 
             var definition = builder.Build();
             var transition = Assert.Single(definition.Transitions);
             var context = new TestContext { Flag = true };
             Assert.True(transition.Condition(context));
-            transition.SideEffect(context);
+            transition.SideEffect(context, TestState.Start, TestState.End);
             Assert.True(effectCalled);
             Assert.Equal("FlagTrue", transition.ConditionName);
             Assert.Equal("Effect", transition.SideEffectName);
@@ -92,7 +92,7 @@ namespace SharpFsm.UnitTests
         [Fact]
         public void LoadFrom_LoadsStatesAndTransitions()
         {
-            var registry = new TransitionRegistry<TestContext>();
+            var registry = new TransitionRegistry<TestState, TestContext>();
             registry.RegisterCondition("Always", ctx => true);
 
             var dto = new SerializableStateMachine

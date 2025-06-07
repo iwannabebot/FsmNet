@@ -1,12 +1,13 @@
 ﻿namespace SharpFsm
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// Represents a definition of a state machine, which includes its states, transitions, and initial state.
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public interface IStateMachineDefinition<TContext>
+    public interface IStateMachineDefinition<TState, TContext> where TState : struct, Enum
     {
         /// <summary>
         /// Gets the type of work item this state machine is associated with.
@@ -21,7 +22,7 @@
         /// <summary>
         /// Gets a collection of transitions between states in the state machine.
         /// </summary>
-        IEnumerable<ITransition<TContext>> Transitions { get; }
+        IEnumerable<ITransition<TState, TContext>> Transitions { get; }
 
         /// <summary>
         /// Gets the initial state of the state machine.

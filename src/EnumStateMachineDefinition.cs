@@ -7,9 +7,9 @@
     /// <summary>
     /// Represents a state machine definition based on an enumeration type.
     /// </summary>
-    /// <typeparam name="TEnum">State Enum Type</typeparam>
+    /// <typeparam name="TState">State Enum Type</typeparam>
     /// <typeparam name="TContext">Context Type</typeparam>
-    public class EnumStateMachineDefinition<TEnum, TContext> : IStateMachineDefinition<TContext> where TEnum : struct, Enum
+    public class EnumStateMachineDefinition<TState, TContext> : IStateMachineDefinition<TState, TContext> where TState : struct, Enum
     {
         /// <summary>
         /// The type of work item this state machine is associated with.
@@ -24,7 +24,7 @@
         /// <summary>
         /// A collection of transitions between states, represented as <see cref="ITransition{TContext}"/> instances.
         /// </summary>
-        public IEnumerable<ITransition<TContext>> Transitions { get; }
+        public IEnumerable<ITransition<TState, TContext>> Transitions { get; }
 
         /// <summary>
         /// The initial state of the state machine, represented as an <see cref="IState"/> instance.
@@ -38,12 +38,12 @@
         /// <param name="states"></param>
         /// <param name="transitions"></param>
         /// <param name="initialState"></param>
-        public EnumStateMachineDefinition(string entityType, IEnumerable<TEnum> states, IEnumerable<ITransition<TContext>> transitions, TEnum initialState)
+        public EnumStateMachineDefinition(string entityType, IEnumerable<TState> states, IEnumerable<ITransition<TState, TContext>> transitions, TState initialState)
         {
             EntityType = entityType;
-            States = states.Select(s => new EnumState<TEnum>(s)).ToList();
+            States = states.Select(s => new EnumState<TState>(s)).ToList();
             Transitions = transitions;
-            InitialState = new EnumState<TEnum>(initialState);
+            InitialState = new EnumState<TState>(initialState);
         }
     }
 }

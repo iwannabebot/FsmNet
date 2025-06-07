@@ -5,8 +5,9 @@
     /// <summary>
     /// Represents a transition between two states in a finite state machine.
     /// </summary>
+    /// <typeparam name="TState">State Type</typeparam>
     /// <typeparam name="TContext">Context Type</typeparam>
-    public interface ITransition<TContext>
+    public interface ITransition<TState, TContext> where TState : struct, Enum
     {
         /// <summary>
         /// Gets the source state of the transition.
@@ -26,7 +27,7 @@
         /// <summary>
         /// Gets an optional side effect that occurs when the transition is taken.
         /// </summary>
-        Action<TContext> SideEffect { get; }
+        Action<TContext, TState, TState> SideEffect { get; }
 
         /// <summary>
         /// Gets the name of the condition that triggers this transition, if any.

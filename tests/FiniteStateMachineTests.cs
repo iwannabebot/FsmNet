@@ -22,16 +22,16 @@ namespace SharpFsm.UnitTests
             Closed
         }
 
-        private TransitionRegistry<TicketContext> SetupRegistry()
+        private TransitionRegistry<TicketState, TicketContext> SetupRegistry()
         {
-            var registry = new TransitionRegistry<TicketContext>();
+            var registry = new TransitionRegistry<TicketState, TicketContext>();
             registry.RegisterCondition("HasAgent", ctx => ctx.IsAgentAssigned);
             registry.RegisterCondition("Confirmed", ctx => ctx.IsCustomerConfirmed);
-            registry.RegisterSideEffect("NotifyCustomer", ctx => ctx.IsCustomerConfirmed = true);
+            registry.RegisterSideEffect("NotifyCustomer", (ctx, _, _) => ctx.IsCustomerConfirmed = true);
             return registry;
         }
 
-        private EnumStateMachineDefinition<TicketState, TicketContext> BuildDefinition(TransitionRegistry<TicketContext> registry)
+        private EnumStateMachineDefinition<TicketState, TicketContext> BuildDefinition(TransitionRegistry<TicketState, TicketContext> registry)
         {
             var builder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create("Ticket")
                 .WithInitialState(TicketState.Open)
@@ -150,7 +150,7 @@ namespace SharpFsm.UnitTests
         [Fact]
         public void Test_CircularTransition_Success()
         {
-            var registry = new TransitionRegistry<TicketContext>();
+            var registry = new TransitionRegistry<TicketState, TicketContext>();
             registry.RegisterCondition("Always", _ => true);
 
             var builder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create("Ticket")
@@ -171,7 +171,7 @@ namespace SharpFsm.UnitTests
         [Fact]
         public void Test_MissingSideEffect_NoException()
         {
-            var registry = new TransitionRegistry<TicketContext>();
+            var registry = new TransitionRegistry<TicketState, TicketContext>();
             registry.RegisterCondition("Always", _ => true);
             // Side effect is missing on purpose
 
