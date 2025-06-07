@@ -190,7 +190,7 @@ public class OrderContext
 ```csharp
 using SharpFsm;
 
-var registry = new TransitionRegistry<OrderContext>();
+var registry = new TransitionRegistry<OrderState, OrderContext>();
 registry.RegisterCondition("PaymentReceived", ctx => ctx.PaymentReceived);
 registry.RegisterCondition("PackingComplete", ctx => ctx.PackingComplete);
 registry.RegisterCondition("Shipped", ctx => ctx.Shipped);
@@ -198,10 +198,10 @@ registry.RegisterCondition("Delivered", ctx => ctx.Delivered);
 registry.RegisterCondition("CancelRequested", ctx => ctx.CancelRequested);
 registry.RegisterCondition("ReturnRequested", ctx => ctx.ReturnRequested);
 
-registry.RegisterSideEffect("NotifyShipment", ctx => Console.WriteLine("Customer notified: Order shipped"));
-registry.RegisterSideEffect("NotifyDelivery", ctx => Console.WriteLine("Customer notified: Order delivered"));
-registry.RegisterSideEffect("NotifyCancel", ctx => Console.WriteLine("Customer notified: Order cancelled"));
-registry.RegisterSideEffect("NotifyReturn", ctx => Console.WriteLine("Customer notified: Order returned"));
+registry.RegisterSideEffect("NotifyShipment", (ctx, _, _) => Console.WriteLine("Customer notified: Order shipped"));
+registry.RegisterSideEffect("NotifyDelivery", (ctx, _, _) => Console.WriteLine("Customer notified: Order delivered"));
+registry.RegisterSideEffect("NotifyCancel", (ctx, _, _) => Console.WriteLine("Customer notified: Order cancelled"));
+registry.RegisterSideEffect("NotifyReturn", (ctx, _, _) => Console.WriteLine("Customer notified: Order returned"));
 ```
 
 3. Build a State Machine
