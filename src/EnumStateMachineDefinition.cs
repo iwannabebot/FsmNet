@@ -22,7 +22,7 @@
         public IEnumerable<IState> States { get; }
 
         /// <summary>
-        /// A collection of transitions between states, represented as <see cref="ITransition{TContext}"/> instances.
+        /// A collection of transitions between states, represented as <see cref="ITransition{TState, TContext}"/> instances.
         /// </summary>
         public IEnumerable<ITransition<TState, TContext>> Transitions { get; }
 

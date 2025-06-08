@@ -9,7 +9,9 @@ class Program
 {
     static void Main()
     {
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
         GenericFsm genericFsm = new GenericFsm();
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
     }
 }
 

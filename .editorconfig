@@ -14,3 +14,18 @@ dotnet_diagnostic.IDE0300.severity = none
 
 # IDE0028: Simplify collection initialization
 dotnet_diagnostic.IDE0028.severity = none
+
+# IDE0090: 'new' expression can be simplified
+dotnet_diagnostic.IDE0090.severity = none
+
+# IDE0016: Null check can be simplified
+dotnet_diagnostic.IDE0016.severity = none
+
+# IDE0305: Use collection expression for fluent
+dotnet_diagnostic.IDE0305.severity = none
+
+# IDE0066: Use switch expression
+dotnet_diagnostic.IDE0066.severity = none
+
+# CA1510: Use ArgumentNullException throw helper
+dotnet_diagnostic.CA1510.severity = none

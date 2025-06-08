@@ -6,6 +6,7 @@
     /// <summary>
     /// Represents a definition of a state machine, which includes its states, transitions, and initial state.
     /// </summary>
+    /// <typeparam name="TState"></typeparam>
     /// <typeparam name="TContext"></typeparam>
     public interface IStateMachineDefinition<TState, TContext> where TState : struct, Enum
     {

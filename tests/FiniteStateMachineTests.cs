@@ -22,7 +22,7 @@ namespace SharpFsm.UnitTests
             Closed
         }
 
-        private TransitionRegistry<TicketState, TicketContext> SetupRegistry()
+        private static TransitionRegistry<TicketState, TicketContext> SetupRegistry()
         {
             var registry = new TransitionRegistry<TicketState, TicketContext>();
             registry.RegisterCondition("HasAgent", ctx => ctx.IsAgentAssigned);
@@ -31,7 +31,7 @@ namespace SharpFsm.UnitTests
             return registry;
         }
 
-        private EnumStateMachineDefinition<TicketState, TicketContext> BuildDefinition(TransitionRegistry<TicketState, TicketContext> registry)
+        private static EnumStateMachineDefinition<TicketState, TicketContext> BuildDefinition(TransitionRegistry<TicketState, TicketContext> registry)
         {
             var builder = FiniteStateMachineBuilder<TicketState, TicketContext>.Create("Ticket")
                 .WithInitialState(TicketState.Open)

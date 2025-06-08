@@ -7,6 +7,7 @@
     /// <summary>
     /// Represents a registry for conditions and side effects associated with transitions in a state machine.
     /// </summary>
+    /// <typeparam name="TState">State Type</typeparam>
     /// <typeparam name="TContext">Context Type</typeparam>
     public class TransitionRegistry<TState, TContext>
     {
